@@ -1,0 +1,88 @@
+% Demonstrates basic transmission and reception using USRP
+%
+% Place the included transmitsignal.mat file into your USRP user folder via SFTP.
+% Once the receivedsignal.mat file is received, transfer it to your current
+% Matlab folder.
+% Then, run this program to display the transmit and received signals.
+
+clc
+disp(' ')
+
+% Received file name
+received_filename = 'receivedsignalEXAMPLE.mat'; % Choose as 'receivedsignal.mat' in your project code
+
+% Transmit signal
+load transmitsignal.mat; % The variable transmitsignal is the transmit signal
+%sigma = 1;
+%receivedsignal = transmitsignal + sigma/sqrt(2) * (randn(size(transmitsignal)) + j*randn(size(transmitsignal)));
+
+% Received signal
+if exist(received_filename,'file')
+    load(received_filename);
+else
+    disp(['Error! Did not find ' received_filename ' file.'])
+    return
+end
+
+if ~exist('receivedsignal','var')
+    disp('Error! Loaded file does not contain the receivedsignal variable.')
+    return;
+end
+
+
+% Display signals
+figure(1)
+clf
+subplot(2,1,1)
+plot(real(transmitsignal),'b')
+hold on
+plot(imag(transmitsignal),'r')
+legend('real','imag')
+ylabel('xI(t)  and  xQ(t)')
+xlabel('Time in samples')
+subplot(2,1,2)
+plot(real(receivedsignal),'b')
+hold on
+plot(imag(receivedsignal),'r')
+zoom xon
+legend('real','imag')
+ylabel('yI(t)  and  yQ(t)')
+xlabel('Time in samples')
+
+figure(2)
+clf
+subplot(2,1,1)
+plot([0:length(transmitsignal)-1]/length(transmitsignal)-0.5, abs(fftshift(fft(transmitsignal))))
+ylabel('abs(X(f))')
+xlabel('Frequency in 1/samples')
+subplot(2,1,2)
+plot([0:length(receivedsignal)-1]/length(receivedsignal)-0.5, abs(fftshift(fft(receivedsignal))))
+ylabel('abs(Y(f))')
+xlabel('Frequency in 1/samples')
+
+% Display information
+disp('Notice the following:')
+disp(' ')
+disp('1) The USRP returns a  received signal whose length is larger than the transmit signal.')
+disp('This is because it does not know exactly where your signal is placed in the received stream.')
+disp('However, if you look carefully, your will notice that the actual signal present in the received stream')
+disp('   is smaller in length than the transmit signal. (Why?)')
+disp(' ')
+disp('2) The received signal is delayed (with an unknown delay) w.r.t. transmit signal.')
+disp('You need to do frame synchronization to discover the delay in the received signal.')
+disp(' ')
+disp('3) There is a small frequency offset in the received signal.')
+disp('So, you need carrier recovery and/or time-varying channel estimation/equalization.')
+disp(' ')
+disp('4) The sampling instants for symbol-rate sampling are not obvious.')
+disp('So, you need to do timing recovery.')
+disp(' ')
+disp('Ideally, carrier recovery, timing recovery and potentially frame synchronization need analog signals.')
+disp('You can approximate that by upsampling the (discrete-time) received signal to a high sampling rate.')
+disp(' ')
+disp('5) The received signal is quite noisy.')
+disp('So, a matched filter is recommended.')
+disp(' ')
+
+
+
