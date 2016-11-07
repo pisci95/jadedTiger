@@ -15,8 +15,8 @@ p1 = p1/norm(p1)/sqrt(1/fs); % '1/fs' simply serves as 'delta' to approximate in
 p1 = p1.';
 
 dataSize = 3;
-timingSync  = [1 -1 1 -1 1 1 -1 -1 1 1 1 -1 -1 -1 1 1 -1 -1 1 -1 1];
-pilot = [-1, -1, 1, -1];
+timingSync  = [-1 1 -1 1 -1 1 1 -1 -1 1 1 1 -1 -1 -1 1 1 -1 -1 1 -1 1];
+pilot = [-1, -1, -1, 1];
 msgSize = (dataSize + length(timingSync) + length(pilot));
 xtraSize = 2*msgSize;
 %load receivedsignal.mat;
@@ -82,7 +82,7 @@ bits1_hat = sign(real(z1k));
 
 res = bits1_hat(2:end);
 correcting = res(msgSize-dataSize:end);
-if (correcting(1) == -1)
+if (correcting(1) == 1)
     msg = correcting(2:end)
 else
     msg = -1 .* correcting(2:end)

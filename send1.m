@@ -13,11 +13,11 @@ clc
 %bits = sign(randn(1, LL));
 
 dataSize = 3;
-bits = [1 1 -1];
+bits = [-1 -1 -1];
 
-timingSync  = [1 -1 1 -1 1 1 -1 -1 1 1 1 -1 -1 -1 1 1 -1 -1 1 -1 1];
-pilot = [-1, -1, 1, -1];
-buffer = [1 -1 1 -1 1 -1 1 -1 1 -1 1 -1];
+timingSync  = [-1 1 -1 1 -1 1 1 -1 -1 1 1 1 -1 -1 -1 1 1 -1 -1 1 -1 1];
+pilot = [-1, -1, -1, 1];
+buffer = ones(1, 500);
 
 msg = [buffer, timingSync, pilot, bits];
 
@@ -29,10 +29,11 @@ p1 = p1/norm(p1)/sqrt(1/fs); % '1/fs' simply serves as 'delta' to approximate in
 p1 = p1.';
 
 %% Create baseband signals
-bit_up = upsample(msg,fs);
-x1 = conv(bit_up,p1);
-x2 = conv(bit_up,p1);
-x3 = x1 + 1i .* x2;
+bit_upR = upsample(real(msg),fs);
+bit_upI = upsample(imag(msg),fs);
+xR = conv(bit_upR,p1);
+xI = conv(bit_upI,p1);
+x1 = xR + 1i .* xI;
 transmitsignal = x1.';
 %len = length(x1);
 %plot([-len/2+1:len/2]/len*fs/T,20*log10(abs(fftshift(1/sqrt(len)*fft(x1)))))
