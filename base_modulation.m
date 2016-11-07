@@ -16,10 +16,12 @@ clc
 bits = sign(randn(LL,1));
 
 % Use rectangular pulse as one possible filter 
-p1 = [zeros(ceil(Ns/2-fs/2),1) ; ones(fs,1) ; zeros(Ns-fs-ceil(Ns/2-fs/2),1) ]; p1 = p1/norm(p1)/sqrt(1/fs); % '1/fs' simply serves as 'delta' to approximate integral as sum
+p1 = [zeros(ceil(Ns/2-fs/2),1) ; ones(fs,1) ; zeros(Ns-fs-ceil(Ns/2-fs/2),1) ];
+p1 = p1/norm(p1)/sqrt(1/fs); % '1/fs' simply serves as 'delta' to approximate integral as sum
 
 % Use sqrt-raised cosine filter form  ww=FIRRCOS(N,Fc,R,Fs,'rolloff',TYPE) as another possible filter
-p2 = firrcos(Ns,1/2/T,alpha,fs/T,'rolloff','sqrt'); p2 = p2/norm(p2)/sqrt(1/fs); % '1/fs' simply serves as 'delta' to approximate integral as sum
+p2 = firrcos(Ns,1/2/T,alpha,fs/T,'rolloff','sqrt');
+p2 = p2/norm(p2)/sqrt(1/fs); % '1/fs' simply serves as 'delta' to approximate integral as sum
 
 
 
@@ -40,7 +42,7 @@ y2 = x2+sigma_n*randn(len,1);
 close all
 ax = [];
 figure(1)
-LargeFigure(gcf, 0.15); % Make figure large
+%LargeFigure(gcf, 0.15); % Make figure large
 clf
 subplot(3,2,1)
 plot([-Ns/2+1:Ns/2]/fs*T,p1)
