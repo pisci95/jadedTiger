@@ -13,17 +13,18 @@ clc
 %bits = sign(randn(1, LL));
 
 dataSize = 3;
-bits = [1  1 1];
+bits = [0 0 0];
 
 timingSync  = [0 1 0 1 0 1 1 0 0 1 1 1 0 0 0 1 1 0 0 1 0 1];
 pilot = [0, 0, 0, 1];
-buffer = ones(1, 500);
+buffer = [ones(1, 300), zeros(1, 300)];
 
-msg = [buffer, timingSync, pilot, bits];
+msg = [timingSync, pilot, bits, pilot];
 
 
 %% symbol mapping
 msgSym = msg .* 2 -1;
+msgSym = [buffer -1 -1 -1 msgSym] .* .75;
 
 
 
@@ -41,6 +42,8 @@ x1 = xR + 1i .* xI;
 transmitsignal = x1.';
 %len = length(x1);
 %plot([-len/2+1:len/2]/len*fs/T,20*log10(abs(fftshift(1/sqrt(len)*fft(x1)))))
+
+
 %% plot stuff
 
 figure(1)

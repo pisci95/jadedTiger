@@ -51,7 +51,7 @@ toCorr = conv(time_up, p1);
 
 [corrVal, offArg] = max(abs(xcorred));
 offset = lags(offArg) + 125;
-v1 = real(y1(offset:(offset+xtraSize*fs)));
+v1 = real(y1(offset:(offset+msgSize*fs)));
 
 
 %% demodulate
