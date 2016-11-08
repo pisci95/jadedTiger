@@ -51,8 +51,6 @@ toCorr = conv(time_up, p1);
 
 [corrVal, offArg] = max(abs(xcorred));
 offset = lags(offArg) + 125;
-delay = offset
-
 v1 = real(y1(offset:(offset+xtraSize*fs)));
 
 
@@ -83,10 +81,14 @@ bits1_hat = sign(real(z1k));
 res = bits1_hat(2:end);
 correcting = res(msgSize-dataSize:end);
 if (correcting(1) == 1)
-    msg = correcting(2:end)
+    msg = correcting(2:end);
 else
-    msg = -1 .* correcting(2:end)
+    msg = -1 .* correcting(2:end);
 end
+
+%% mapping
+
+data = (msg + 1) .* .5
 
 
 
@@ -94,14 +96,20 @@ end
 
 figure(1)
 clf
-subplot(4,1,1)
+subplot(4,2,1)
 plot(real(y1),'b')
 hold on
 plot(imag(y1),'r')
 legend('real','imag')
 ylabel('yI(t)  and  yQ(t)')
 xlabel('Time in samples')
-subplot(4,1,2)
+
+subplot(4,2,2)
+plot([0:length(y1)-1]/length(y1)-0.5, abs(fftshift(fft(y1))))
+ylabel('abs(Y(f))')
+xlabel('Frequency in 1/samples')
+
+subplot(4,2,3)
 plot(real(z1),'b')
 hold on
 plot(imag(z1),'r')
@@ -111,7 +119,13 @@ ylabel('zI(t)  and  zQ(t)')
 xlabel('Time in samples')
 
 
-subplot(4,1,3)
+subplot(4,2,4)
+plot([0:length(z1)-1]/length(z1)-0.5, abs(fftshift(fft(z1))))
+ylabel('abs(Z(f))')
+xlabel('Frequency in 1/samples')
+
+
+subplot(4,2,5)
 plot(real(z1k),'b')
 hold on
 plot(imag(z1k),'r')
@@ -121,14 +135,25 @@ ylabel('z1kI(t)  and  z1kQ(t)')
 xlabel('Time in samples')
 
 
-subplot(4,1,4)
+subplot(4,2,6)
+plot([0:length(z1k)-1]/length(z1k)-0.5, abs(fftshift(fft(z1k))))
+ylabel('abs(Z1k(f))')
+xlabel('Frequency in 1/samples')
+
+
+subplot(4,2,7)
 stem(res,'b')
 %hold on
 %stem(msg,'r')
 zoom xon
 %legend('real')
-ylabel('bits(t)  and  b(t)')
+ylabel('bits(t)')
 xlabel('Time in samples')
+
+subplot(4,2,8)
+plot([0:length(res)-1]/length(res)-0.5, abs(fftshift(fft(res))))
+ylabel('abs(BITS(f))')
+xlabel('Frequency in 1/samples')
 
 % figure(2)
 % clf
