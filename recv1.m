@@ -53,6 +53,14 @@ toCorr = conv(time_up, p1);
 offset = lags(offArg) + 125;
 v1 = real(y1(offset:(offset+msgSize*fs)));
 
+%% plot received bits
+figure(1)
+hold on;
+title('Signal Space Diagram');
+xlabel('I');
+ylabel('Q');
+scatter(real(y1(offset:(offset+msgSize*fs))), imag(y1(offset:(offset+msgSize*fs))));
+
 
 %% demodulate
 
@@ -75,6 +83,9 @@ z1k = z1(125:fs:(msgSize*fs)+125);
 
 %% guess
 
+%% plot sampled bits
+scatter(real(z1k), imag(z1k), 'rx');
+legend('y1', 'z1k');
 
 bits1_hat = sign(real(z1k));
 
@@ -94,7 +105,7 @@ data = (msg + 1) .* .5
 
 %% plot stuff
 
-figure(1)
+figure(3)
 clf
 subplot(4,2,1)
 plot(real(y1),'b')

@@ -13,7 +13,7 @@ clc
 %bits = sign(randn(1, LL));
 
 dataSize = 3;
-bits = [0 0 0];
+bits = [0 1 0];
 
 timingSync  = [0 1 0 1 0 1 1 0 0 1 1 1 0 0 0 1 1 0 0 1 0 1];
 pilot = [0, 0, 0, 1];
