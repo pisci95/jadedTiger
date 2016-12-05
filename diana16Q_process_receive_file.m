@@ -22,7 +22,7 @@ RXusersamplingrate = 25e6; % user TX baseband sampling rate in Hz.
 
 % ************************************************
 % RUNTIME or TEST?
-flag = false; % true indicates normal operation. false indicates the ideal case of receivedsignal being substituted for transmit signal directly (to help debugging your code)
+flag = true; % true indicates normal operation. false indicates the ideal case of receivedsignal being substituted for transmit signal directly (to help debugging your code)
 
 
 if flag == true
@@ -138,8 +138,6 @@ zkpilot = zk(1:lenpilotsymbols); % Samples corresponding to pilot symbols
 h0 = (transpose(conj(xkpilot)))*zkpilot/(norm(xkpilot)^2); % Channel gain estimate of one-tap channel.
 disp(['Channel gain is ' num2str(abs(h0)) '*exp(j*' num2str(angle(h0)) ')'])
 
-
-
 % ************************************************
 % Equalize one-tap channel using one-tap equalizer
 vk = zk/h0; % Equalized samples. 
@@ -166,6 +164,22 @@ disp(['Estimated SNR{equalizer} = ' num2str(10*log10(SNRequalizer)) ' dB, using 
 % BPSK modulation always used for pilot bits
 pilotbitshat = (1+xkpilothat)/2 > 0.5; % BPSK
 
+%multistep equalizing
+for rnd = 2:((lenpacketsymbols - lenpilotsymbols) / lenpilotsymbols)
+    
+    zkpilotR = zk(1: lenpilotsymbols*rnd); %new matched pilot
+    xkpilotR = vk(1: lenpilotsymbols*rnd);
+    h0 = (transpose(conj(xkpilot)))*zkpilot/(norm(xkpilot)^2); % Channel gain estimate of one-tap channel.
+    disp(['Channel gain is ' num2str(abs(h0)) '*exp(j*' num2str(angle(h0)) ')'])
+
+    % ************************************************
+    % Equalize one-tap channel using one-tap equalizer
+    vk = zk/h0; % Equalized samples. 
+    %vkpilot = vk(1:lenpilotsymbols); % Equalized samples corresponding to pilot symbols
+    vkcoded = vk(lenpilotsymbols+1:lenpacketsymbols); % Equalized samples corresponding to message symbols
+
+end
+
 
 
 % ************************************************
@@ -174,12 +188,14 @@ pilotbitshat = (1+xkpilothat)/2 > 0.5; % BPSK
 %vkcodedmatched = sum(vkcoded); % Match filter to all-ones vector
 %vkcoded = OFDMDemod(128, 32, vkcoded)';
 %vkcoded = (vkcoded>0); % BPSK decoding
-vkDecoded = zeros(length(vkcoded)*2 ,1);
+vkDecoded = zeros(length(vkcoded)*4 ,1);
 for i = 1:length(vkcoded)
-    re = real(vkcoded(i));
-    im = imag(vkcoded(i));
-    vkDecoded(2*i - 1) = (re > 0);
-    vkDecoded(2*i) = (im > 0);
+    re = real(vkcoded(i))/sqrt(Ex);
+    im = imag(vkcoded(i))/sqrt(Ex);
+    vkDecoded(4*i - 3) = (abs(re) <= 1);
+    vkDecoded(4*i - 2) = (re < 0);
+    vkDecoded(4*i - 1) = (abs(im) <= 1);
+    vkDecoded(4*i - 0) = (im > 0);
 end
 
 messagebitshat = decode(vkDecoded)';
