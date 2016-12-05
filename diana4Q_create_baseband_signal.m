@@ -55,7 +55,7 @@ pt = ones(Tsamples,1); pt = Tsamples*pt/norm(pt); % Nyquist pulse of unit energy
 % Pilot symbols constellation.
 pilotconstellation = sqrt(Ex)*[-1; 1]; % BPSK constellation symbols
 % Message constellation.
-constellation = sqrt(Ex)*[-1-1i; -1+1i; 1 - 1i; 1+1i]; % BPSK constellation symbols. ** Need M-QAM in final project **
+constellation = sqrt(Ex)*[-1-1i; 1-1i; -1 + 1i; 1+1i]; % BPSK constellation symbols. ** Need M-QAM in final project **
 r = numinfobits/numcodedbits;
 disp(['Using repetition-coded 4-QAM modulation of code rate r = ' num2str(r) ''])
 disp(['So, bit rate R = ' num2str(r*b) ' (info) bits/symbol'])
